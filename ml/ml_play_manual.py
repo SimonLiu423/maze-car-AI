@@ -30,8 +30,8 @@ class MLPlay:
             self.control_list["right_PWM"] = -150
         else:
 
-            self.control_list["left_PWM"] = 100
-            self.control_list["right_PWM"] = 100
+            self.control_list["left_PWM"] = 0
+            self.control_list["right_PWM"] = 0
 
         return self.control_list
 
