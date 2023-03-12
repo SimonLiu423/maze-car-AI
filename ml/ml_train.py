@@ -19,16 +19,17 @@ class Action(IntEnum):
 path = "./log"
 allFile = os.listdir(path)
 data_set = []
-for file in allFile[:5]:
-    if file[0] == '1':
-        # print(file)
-        with open(os.path.join(path, file), "rb") as f:
-            data_set.append(pickle.load(f))
+for file in allFile[:-3]:
+    # print(file)
+    with open(os.path.join(path, file), "rb") as f:
+        data_set.append(pickle.load(f))
 
 # feature
 f_sensor = []
 l_sensor = []
 r_sensor = []
+lt_sensor = []
+rt_sensor = []
 angle = []
 # target_angle = []
 # stuck_cnt = []
@@ -42,6 +43,8 @@ for data in data_set:
         f_sensor.append(data["scene_info"][i]["F_sensor"])
         l_sensor.append(data["scene_info"][i]["L_sensor"])
         r_sensor.append(data["scene_info"][i]["R_sensor"])
+        lt_sensor.append(data["scene_info"][i]["L_T_sensor"])
+        rt_sensor.append(data["scene_info"][i]["R_T_sensor"])
         angle.append(data["scene_info"][i]["angle"])
         # target_angle.append(data["scene_info"][i]["target_angle"])
         # stuck_cnt.append(data["scene_info"][i]["stuck_cnt"])
@@ -51,17 +54,17 @@ for data in data_set:
         Y.append(data["action"][i])
 
 Y = np.array(Y)
-X = np.array([0, 0, 0, 0])
+X = np.array([0, 0, 0, 0, 0, 0])
 for i in range(len(f_sensor)):
     # X = np.vstack((X, [f_sensor[i], l_sensor[i], r_sensor[i], angle[i], target_angle[i], stuck_cnt[i], direction[i],
     #                    angle_diff[i]]))
-    X = np.vstack((X, [f_sensor[i], l_sensor[i], r_sensor[i], angle[i]]))
+    X = np.vstack((X, [f_sensor[i], l_sensor[i], r_sensor[i], lt_sensor[i], rt_sensor[i], angle[i]]))
 X = X[1::]
 
 # training
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
-model = sklearn.neighbors.KNeighborsClassifier(n_neighbors=5)
+model = sklearn.tree.DecisionTreeClassifier()
 model.fit(x_train, y_train)
 
 # evaluation

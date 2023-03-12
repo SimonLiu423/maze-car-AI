@@ -16,6 +16,8 @@ class MLPlay:
         self.r_sensor_value = 0
         self.l_sensor_value = 0
         self.f_sensor_value = 0
+        self.lt_sensor_value = 0
+        self.rt_sensor_value = 0
         self.angle = 0
         self.x = 0
         self.y = 0
@@ -43,6 +45,8 @@ class MLPlay:
         self.f_sensor_value = scene_info["F_sensor"]
         self.l_sensor_value = scene_info["L_sensor"]
         self.r_sensor_value = scene_info["R_sensor"]
+        self.lt_sensor_value = scene_info["L_T_sensor"]
+        self.rt_sensor_value = scene_info["R_T_sensor"]
         self.angle = scene_info["angle"]
         self.x = scene_info["x"]
         self.y = scene_info["y"]
@@ -70,7 +74,9 @@ class MLPlay:
 
         # x = np.array([self.f_sensor_value, self.l_sensor_value, self.r_sensor_value, self.angle, self.target_angle,
         #               self.stuck_cnt, self.direction, self.ang_diff]).reshape(1, -1)
-        x = np.array([self.f_sensor_value, self.l_sensor_value, self.r_sensor_value, self.angle]).reshape(1, -1)
+        x = np.array(
+            [self.f_sensor_value, self.l_sensor_value, self.r_sensor_value, self.lt_sensor_value, self.rt_sensor_value,
+             self.angle]).reshape(1, -1)
         action = self.model.predict(x).reshape(-1, )[0]
         print(action)
 

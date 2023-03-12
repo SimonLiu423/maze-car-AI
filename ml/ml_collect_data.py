@@ -40,7 +40,7 @@ class MLPlay:
             "scene_info": [],
             "action": [],
         }
-        self.data_needed = 20
+        self.data_needed = 100
         self.action_angle = [0, 90, -90]
         self.action_prob = [0.95, 0.025, 0.025]  # straight, left, right
 
@@ -226,7 +226,7 @@ class MLPlay:
         """
         # Store game progress to file if not stuck
         if not self.stuck:
-            self.flush_to_file(1, self.frame)
+            self.flush_to_file(5, self.frame)
 
             self.data_needed -= 1
             # Exit program if data is enough
