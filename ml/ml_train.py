@@ -7,53 +7,61 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.tree import DecisionTreeRegressor
 import math
+from enum import IntEnum
+
+
+class Action(IntEnum):
+    STRAIGHT = 0
+    LEFT = 1
+    RIGHT = 2
+
 
 path = "./log"
 allFile = os.listdir(path)
 data_set = []
-for file in allFile:
+for file in allFile[:5]:
     if file[0] == '1':
         # print(file)
         with open(os.path.join(path, file), "rb") as f:
             data_set.append(pickle.load(f))
 
 # feature
-car_x = []
-car_y = []
-dx = []
-dy = []
 f_sensor = []
-lt_sensor = []
-rt_sensor = []
+l_sensor = []
+r_sensor = []
 angle = []
-stuck_cnt = []
+# target_angle = []
+# stuck_cnt = []
+# direction = []
+# angle_diff = []
 
 Y = []
 
 for data in data_set:
-    for i, sceneInfo in enumerate(data["scene_info"][:-1]):
-        car_x.append(data["scene_info"][i+1]["x"])
-        car_y.append(data["scene_info"][i+1]["y"])
-        dx.append(data["scene_info"][i+1]["x"] - data["scene_info"][i]["x"])
-        dy.append(data["scene_info"][i+1]["y"] - data["scene_info"][i]["y"])
-        f_sensor.append(data["scene_info"][i+1]["F_sensor"])
-        lt_sensor.append(data["scene_info"][i+1]["L_T_sensor"])
-        rt_sensor.append(data["scene_info"][i+1]["R_T_sensor"])
-        angle.append(data["scene_info"][i+1]["angle"])
-        stuck_cnt.append(data["scene_info"][i+1]["stuck_cnt"])
+    for i, sceneInfo in enumerate(data["scene_info"]):
+        f_sensor.append(data["scene_info"][i]["F_sensor"])
+        l_sensor.append(data["scene_info"][i]["L_sensor"])
+        r_sensor.append(data["scene_info"][i]["R_sensor"])
+        angle.append(data["scene_info"][i]["angle"])
+        # target_angle.append(data["scene_info"][i]["target_angle"])
+        # stuck_cnt.append(data["scene_info"][i]["stuck_cnt"])
+        # direction.append(data["scene_info"][i]["direction"])
+        # angle_diff.append(data["scene_info"][i]["angle_diff"])
 
-        Y.append([data["command"][i+1]["left_PWM"], data["command"][i+1]["right_PWM"]])
+        Y.append(data["action"][i])
 
 Y = np.array(Y)
-X = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0])
-for i in range(len(car_x)):
-    X = np.vstack((X, [car_x[i], car_y[i], dx[i], dy[i], f_sensor[i], lt_sensor[i], rt_sensor[i], angle[i], stuck_cnt[i]]))
+X = np.array([0, 0, 0, 0])
+for i in range(len(f_sensor)):
+    # X = np.vstack((X, [f_sensor[i], l_sensor[i], r_sensor[i], angle[i], target_angle[i], stuck_cnt[i], direction[i],
+    #                    angle_diff[i]]))
+    X = np.vstack((X, [f_sensor[i], l_sensor[i], r_sensor[i], angle[i]]))
 X = X[1::]
 
 # training
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 
-model = sklearn.neighbors.KNeighborsRegressor()
+model = sklearn.neighbors.KNeighborsClassifier(n_neighbors=5)
 model.fit(x_train, y_train)
 
 # evaluation
