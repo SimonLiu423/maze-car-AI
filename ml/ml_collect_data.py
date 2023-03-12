@@ -106,8 +106,8 @@ class MLPlay:
         Record the scene information and the command
         The received scene information will be stored in a list.
         """
-        # scene_info_dict["prev_x"] = self.prev_pos[0]
-        # scene_info_dict["prev_y"] = self.prev_pos[1]
+        scene_info_dict["angle"] = self.angle
+        scene_info_dict["stuck_cnt"] = self.stuck_cnt
         self._game_progress["scene_info"].append(scene_info_dict)
         self._game_progress["command"].append(cmd_dict)
 
@@ -132,7 +132,7 @@ class MLPlay:
         Reset the status
         """
         # Store game progress to file
-        self.flush_to_file(4, self.frame)
+        self.flush_to_file(1, self.frame)
 
         self.data_needed -= 1
         # Exit program if data is enough
