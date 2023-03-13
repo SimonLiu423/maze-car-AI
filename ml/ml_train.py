@@ -19,7 +19,10 @@ class Action(IntEnum):
 path = "./log"
 allFile = os.listdir(path)
 data_set = []
-for file in allFile[:-3]:
+for file in allFile:
+    frame_used = int(file.split('frame')[0].split('_')[1])
+    if frame_used > 3000 or frame_used < 1000:
+        continue
     # print(file)
     with open(os.path.join(path, file), "rb") as f:
         data_set.append(pickle.load(f))
