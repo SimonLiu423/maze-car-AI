@@ -131,8 +131,7 @@ class MLPlay:
         return
 
     def turn_speed(self, angle_diff):
-        a = 255 / (180 ** 2)
-        speed = a * angle_diff ** 2
+        speed = (1 / (1 + np.exp(-(angle_diff/255*20) + 5))) * 255
         print("Turn speed: {}".format(speed))
         return speed
 
