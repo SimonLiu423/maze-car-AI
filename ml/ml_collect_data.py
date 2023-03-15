@@ -179,7 +179,8 @@ class MLPlay:
         return
 
     def turn_speed(self, angle_diff):
-        speed = (1 / (1 + np.exp(-(angle_diff / 255 * 20) + 5))) * 255
+        a = 255 / (180 ** 2)
+        speed = a * angle_diff ** 2
         print("Turn speed: {}".format(speed))
         return speed
 
@@ -225,7 +226,7 @@ class MLPlay:
         """
         # Store game progress to file if not stuck
         if not self.stuck:
-            self.flush_to_file(1, self.frame)
+            self.flush_to_file(5, self.frame)
 
             self.data_needed -= 1
             # Exit program if data is enough
