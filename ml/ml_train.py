@@ -18,11 +18,22 @@ class Action(IntEnum):
 
 path = "./log"
 allFile = os.listdir(path)
+allFile.sort()
+
 data_set = []
+prev_map = ''
+cnt = 0
 for file in allFile:
     frame_used = int(file.split('frame')[0].split('_')[1])
-    if frame_used > 3000 or frame_used < 1000:
+    if frame_used > 3500:
         continue
+    if prev_map == file[0]:
+        if cnt > 5:
+            continue
+        cnt += 1
+    else:
+        prev_map = file[0]
+        cnt = 0
     # print(file)
     with open(os.path.join(path, file), "rb") as f:
         data_set.append(pickle.load(f))
